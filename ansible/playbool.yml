@@ -1,0 +1,52 @@
+---
+- name: Deploy Node.js app from GitHub on Ubuntu EC2
+  hosts: all
+  become: true
+
+  vars:
+    github_username: "dev-sd092"
+    github_token: "REMOVED"
+    repo_name: "Node-js-application"
+    app_dir: "/home/ubuntu/Node-js-application"
+    token: $GITHUB_TOKEN
+
+  tasks:
+    - name: Update apt packages
+      apt:
+        update_cache: yes
+        upgrade: yes
+
+    - name: Install Node.js, npm, and Git
+      apt:
+        name:
+          - nodejs
+          - npm
+          - git
+        state: present
+
+    - name: Clone or update Node.js app repository
+      git:
+        repo: "https://github.com/dev-sd092/Node-js-application.git"
+        dest: "/home/ubuntu/Node-js-application"
+        version: main
+        force: yes
+
+    - name: Install npm dependencies
+      command: npm install
+      args:
+        chdir: /home/ubuntu/Node-js-application
+      ignore_errors: yes
+
+    - name: Ensure express is installed
+      command: npm install express
+      args:
+        chdir: /home/ubuntu/Node-js-application
+
+    # - name: Stop any running Node.js apps
+    #   shell: pkill -f node || true
+    #   ignore_errors: yes
+
+    - name: Start Node.js app in background with logs
+      shell: nohup node index.js > /home/ubuntu/server.log 2>&1 &
+      args:
+        chdir: /home/ubuntu/Node-js-application

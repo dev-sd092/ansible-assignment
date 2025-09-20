@@ -1,0 +1,16 @@
+# Ignore Terraform state files
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# Ignore logs
+*.log
+
+# Ignore OS files
+.DS_Store
+
+# Ignore any node_modules if accidentally added
+node_modules/
+
+# Ignore AWS private keys if accidentally added
+*.pem
